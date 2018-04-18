@@ -390,30 +390,26 @@ wget -O /home/vps/public_html/uptime.php "http://autoscript.kepalatupai.com/upti
 wget -O /home/vps/public_html/index.html "http://apache07.me/index.html"
 service php5-fpm restart
 
-
-
 # install openvpn
-wget -O /etc/openvpn/openvpn.tar "https://raw.githubusercontent.com/m4rsh4ll/OCSAutoScript/master/openvpn-debian.tar"
+wget -O /etc/openvpn/openvpn.tar $source/openvpn-debian.tar
 cd /etc/openvpn/
 tar xf openvpn.tar
-wget -O /etc/openvpn/server.conf "https://raw.githubusercontent.com/m4rsh4ll/OCSAutoScript/master/server.conf"
-wget -O /etc/openvpn/keys/dh2048.pem "https://raw.githubusercontent.com/m4rsh4ll/OCSAutoScript/master/dh2048.pem"
+wget -O /etc/openvpn/server.conf $source/server.conf
+wget -O /etc/openvpn/keys/dh2048.pem $source/dh2048.pem
 rm openvpn.tar
 sysctl -w net.ipv4.ip_forward=1
 sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
 iptables -t nat -I POSTROUTING -s 192.168.100.0/24 -o eth0 -j MASQUERADE
 iptables-save > /etc/iptables_yg_baru_dibikin.conf
-wget -O /etc/network/if-up.d/iptables "https://raw.githubusercontent.com/m4rsh4ll/OCSAutoScript/master/iptables"
+wget -O /etc/network/if-up.d/iptables $source/iptables
 chmod +x /etc/network/if-up.d/iptables
 service openvpn restart
 
 # konfigurasi openvpn
 cd /etc/openvpn/
-wget -O /etc/openvpn/client.ovpn "https://raw.githubusercontent.com/m4rsh4ll/OCSAutoScript/master/client.ovpn"
+wget -O /etc/openvpn/client.ovpn $source/client.ovpn
 sed -i $MYIP2 /etc/openvpn/client.ovpn;
 cp client.ovpn /home/vps/public_html/
-
-
 
 cd
 # install mrtg
@@ -657,7 +653,6 @@ wget $source/pptp.sh
 chmod +x pptp.sh
 ./pptp.sh
 
-
 # text gambar
 apt-get install boxes
 
@@ -755,37 +750,6 @@ sysctl vm.swappiness=10
 chown root:root /swapfile 
 chmod 0600 /swapfile
 cd
-
-#bonus block playstation
-iptables -A OUTPUT -d account.sonyentertainmentnetwork.com -j DROP
-iptables -A OUTPUT -d auth.np.ac.playstation.net -j DROP
-iptables -A OUTPUT -d auth.api.sonyentertainmentnetwork.com -j DROP
-iptables -A OUTPUT -d auth.api.np.ac.playstation.net -j DROP
-iptables-save
-
-#bonus block torrent
-iptables -A INPUT -m string --algo bm --string "BitTorrent" -j REJECT
-iptables -A INPUT -m string --algo bm --string "BitTorrent protocol" -j REJECT
-iptables -A INPUT -m string --algo bm --string "peer_id=" -j REJECT
-iptables -A INPUT -m string --algo bm --string ".torrent" -j REJECT
-iptables -A INPUT -m string --algo bm --string "announce.php?passkey=" -j REJECT
-iptables -A INPUT -m string --algo bm --string "torrent" -j REJECT
-iptables -A INPUT -m string --algo bm --string "info_hash" -j REJECT
-iptables -A INPUT -m string --algo bm --string "/default.ida?" -j REJECT
-iptables -A INPUT -m string --algo bm --string ".exe?/c+dir" -j REJECT
-iptables -A INPUT -m string --algo bm --string ".exe?/c_tftp" -j REJECT
-iptables -A INPUT -m string --string "peer_id" --algo kmp -j REJECT
-iptables -A INPUT -m string --string "BitTorrent" --algo kmp -j REJECT
-iptables -A INPUT -m string --string "BitTorrent protocol" --algo kmp -j REJECT
-iptables -A INPUT -m string --string "bittorrent-announce" --algo kmp -j REJECT
-iptables -A INPUT -m string --string "announce.php?passkey=" --algo kmp -j REJECT
-iptables -A INPUT -m string --string "find_node" --algo kmp -j REJECT
-iptables -A INPUT -m string --string "info_hash" --algo kmp -j REJECT
-iptables -A INPUT -m string --string "get_peers" --algo kmp -j REJECT
-iptables -A INPUT -p tcp --dport 25 -j REJECT   
-iptables -A FORWARD -p tcp --dport 25 -j REJECT 
-iptables -A OUTPUT -p tcp --dport 25 -j REJECT 
-iptables-save
 
 # Finishing
 wget -O /etc/vpnfix.sh $source/vpnfix.sh
